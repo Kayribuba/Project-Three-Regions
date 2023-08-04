@@ -1,0 +1,172 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class PlayerController : MonoBehaviour
+{
+    public Vector3 forwardVector { get; private set; }
+    public bool isFacingLeft { get; private set; }
+    public bool isGrounded { get; private set; }
+
+    [Header("Values")]
+    [Tooltip("How long will fully accelerating take")]
+    [SerializeField, Min(0.001f)] float  accelerationTime = .1f;
+    [Tooltip("How long will fully decelerating take")]
+    [SerializeField, Min(0.001f)] float  decelerationTime = .2f;
+    [SerializeField, Range(0, 2)] float airSpeedModifier = .8f;
+    [SerializeField] float maxSpeed = 25f;
+    [SerializeField] float jumpForce = 35f;
+    [SerializeField] float fallingAccelerationIntensity = 8f;
+    [SerializeField] float gravityScale = 10;
+    [SerializeField] float coyoteTimeWindow = 0.1f;
+    [SerializeField] float coyoteJumpWindow = 0.05f;
+    [SerializeField] float groundCheckRadius = .1f;
+    [SerializeField, Min(0)] float jumpCancelPower = 1.5f;
+
+    [Header("Reference")]
+    [SerializeField] LayerMask GroundLayers;
+    [SerializeField] Transform GroundCheck;
+    [SerializeField] Rigidbody2D rb;
+
+    [Header("Animation Events")]
+    [SerializeField] UnityEvent<bool> UE_Grounded;
+    [SerializeField] UnityEvent<float> UE_HorizontalVelocity;
+
+    float horizontalInput;
+    bool jumpPressedDown;
+    bool jumpPressedUp;
+
+    float targetTime_CoyoteJump = -1;
+    float targetTime_CoyoteTime = -1;
+
+    Vector2 rbVelocityHash = Vector2.zero;
+
+    void Start()
+    {
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
+
+        rb.gravityScale = gravityScale;
+    }
+    void Update()
+    {
+        GetInput();
+        ApplyMovement();
+        CheckGround();
+        IntensifyGravityScale();
+    }
+
+    private void GetInput()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        jumpPressedDown = Input.GetKeyDown(KeyCode.Space);
+        jumpPressedUp = Input.GetKeyUp(KeyCode.Space);
+
+        if (jumpPressedDown) targetTime_CoyoteJump = Time.time + coyoteJumpWindow;
+        else if (jumpPressedUp) targetTime_CoyoteJump = -1;
+    }
+
+    private void ApplyMovement()
+    {
+        Vector2 targetVelocity = Vector2.zero;
+        rbVelocityHash = rb.velocity;
+        float hMovementThisFrame = 0;
+
+        targetVelocity.y = rbVelocityHash.y;
+
+        if (Mathf.Abs(horizontalInput) > 0)//accelerate
+        {
+            float airBonus = isGrounded ? 1 : airSpeedModifier;
+            hMovementThisFrame = maxSpeed / accelerationTime * airBonus * Time.deltaTime * horizontalInput;
+
+            if (hMovementThisFrame > 0)
+            {
+                targetVelocity.x = Mathf.Min(rbVelocityHash.x + hMovementThisFrame, maxSpeed);
+            }
+            else if (hMovementThisFrame < 0)
+            {
+                targetVelocity.x = Mathf.Max(rbVelocityHash.x + hMovementThisFrame, -maxSpeed);
+            }
+            else
+            {
+                targetVelocity.x = rbVelocityHash.x;
+            }
+        }
+        else if (rbVelocityHash.x != 0)//decelerate (if not already stopping)
+        {
+            hMovementThisFrame = maxSpeed / decelerationTime * Time.deltaTime;
+            float rbVelocitySign = Mathf.Sign(rbVelocityHash.x);
+
+            targetVelocity.x = rbVelocityHash.x + hMovementThisFrame * -rbVelocitySign;
+
+            if (rbVelocitySign > 0)
+            {
+                targetVelocity.x = Mathf.Max(targetVelocity.x, 0);
+            }
+            else if (rbVelocitySign < 0)
+            {
+                targetVelocity.x = Mathf.Min(targetVelocity.x, 0);
+            }
+        }
+
+        CheckFlipNeed();
+
+        if (targetTime_CoyoteJump > Time.time && isGrounded)
+        {
+            targetVelocity.y = jumpForce;
+            targetTime_CoyoteJump = -1;
+        }
+        else if (rbVelocityHash.y > 0 && jumpPressedUp)
+        {
+            targetVelocity.y = rbVelocityHash.y / (1 + jumpCancelPower);
+        }
+
+        UE_HorizontalVelocity?.Invoke(targetVelocity.x);
+        rb.velocity = targetVelocity;
+    }
+
+    private void CheckGround()
+    {
+        if (Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, GroundLayers))
+        {
+            isGrounded = true;
+            targetTime_CoyoteTime = Time.time + coyoteTimeWindow;
+        }
+        else if (targetTime_CoyoteTime >= Time.time)
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+        UE_Grounded.Invoke(isGrounded);
+    }
+    private void IntensifyGravityScale()
+    {
+        if (rbVelocityHash.y < 0)
+            rb.gravityScale = gravityScale + fallingAccelerationIntensity;
+        else
+            rb.gravityScale = gravityScale;
+    }
+    void CheckFlipNeed()
+    {
+        if ((horizontalInput > 0 && isFacingLeft) || (horizontalInput < 0 && !isFacingLeft))
+            Flip();
+    }
+    void Flip()
+    {
+        transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        isFacingLeft = !isFacingLeft;
+        forwardVector = isFacingLeft ? new Vector2(-1, 0) : new Vector2(1, 0);
+    }
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(GroundCheck.position, groundCheckRadius);
+    }
+}
