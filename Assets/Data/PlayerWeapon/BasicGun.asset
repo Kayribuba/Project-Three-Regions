@@ -16,7 +16,9 @@ MonoBehaviour:
   _displayName: Basic Gun
   _weaponDescription: a basic gun
   _damage: 1
-  _fireCooldown: 1
-  _barrelOffset: {x: 0.5, y: 0}
+  _fireCooldown: 0.1
+  _firingType: 2
+  _burstAmmoCount: 2
+  _barrelOffset: {x: 0.3959, y: 0.0625}
   _weaponSprite: {fileID: 21300000, guid: 4656e9f253d82b44387d15a69577abec, type: 3}
-  _projectile: {fileID: 0}
+  _projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}

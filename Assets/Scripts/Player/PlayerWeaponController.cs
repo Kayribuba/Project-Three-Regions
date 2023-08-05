@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,19 +9,53 @@ public class PlayerWeaponController : MonoBehaviour
 
     [SerializeField] GameObject Barrel;
     [SerializeField] PlayerVisualController playerVisualController;
+    [SerializeField] PlayerController playerController;
 
     [SerializeField] List<PlayerWeapon> OwnedWeapons = new List<PlayerWeapon>();
     PlayerWeapon currentWeapon = null;
     int currentWeaponIndex = -1;
 
     Dictionary<string, float> dic_nextAvaibleTime = new Dictionary<string, float>();
-    
+
+    Vector2 FireDirection => GetFiringDireciton();
+
+    bool PressedFireButton = false;
+    bool HoldingFireButton = false;
+    int FireIteration = 0;
+
+    KeyCode FireButton = KeyCode.K;
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab)) SetIsHoldingWeapon(!IsHoldingWeapon);
-        if (Input.GetKeyDown(KeyCode.K)) TryUseWeapon();
         if (Input.GetKeyDown(KeyCode.E)) SwitchToNextWeapon();
         if (Input.GetKeyDown(KeyCode.Q)) SwitchToPreviousWeapon();
+
+        if (Input.GetKeyDown(FireButton))
+        {
+            PressedFireButton = true;
+            HoldingFireButton = true;
+        }
+        if (Input.GetKeyUp(FireButton))
+        {
+            HoldingFireButton = false;
+            FireIteration = 0;
+        }
+
+        if(PressedFireButton || 
+            (HoldingFireButton && currentWeapon.FiringType == FireType.Automatic) ||
+            (HoldingFireButton && currentWeapon.FiringType == FireType.Burst && currentWeapon.BurstAmmoCount > FireIteration))
+        {
+
+            bool didFiredWeapon = TryUseWeapon();
+
+            if (currentWeapon.FiringType == FireType.Burst && didFiredWeapon)
+            {
+                FireIteration++;
+            }
+        }
+
+        PressedFireButton = false;
     }
     void Start()
     {
@@ -42,8 +77,20 @@ public class PlayerWeaponController : MonoBehaviour
         if (nextAvaibleTime > Time.time) return false;
 
         Debug.Log($"{currentWeapon.name} dýkþýn dýkþýn diyor");
-        dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.FireCooldown;
         StartCoroutine(BlinkAnimation(Barrel, false));
+
+        if(currentWeapon.Projectile != null)
+        {
+            Quaternion targetRotation = GetDirectionAsRotation();
+            GameObject instProjectile = Instantiate(currentWeapon.Projectile, Barrel.transform.position, targetRotation);
+
+            if(instProjectile.TryGetComponent(out Projectile_Base outProjectile))
+            {
+                outProjectile.Initalize(FireDirection, currentWeapon);
+            }
+        }
+
+        dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.FireCooldown;
 
         return true;
     }
@@ -142,5 +189,27 @@ public class PlayerWeaponController : MonoBehaviour
         {
             dic_nextAvaibleTime[pw.ID] = -1;
         }
+    }
+
+    Vector2 GetFiringDireciton()
+    {
+        if (playerController == null) return Vector2.zero;
+
+        Vector2 direction = Vector2.zero;
+
+        direction.x = playerController.gameObject.transform.localScale.x;
+        if (direction.x > 0) direction.x = 1;
+        else direction.x = -1;
+
+        direction.y = 0;
+
+        return direction;
+    }
+    Quaternion GetDirectionAsRotation()
+    {
+        Vector2 dir = FireDirection;
+
+        if (dir.x == 1) return Quaternion.Euler(0, 0, 0);
+        else return Quaternion.Euler(0, 0, 180);
     }
 }
