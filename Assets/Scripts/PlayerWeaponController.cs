@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour
 {
-    [SerializeField] PlayerWeapon basicWeapon;
-    [SerializeField] PlayerWeapon secondWeapon;
+    public bool IsHoldingWeapon { get; private set; } = false;
+
     [SerializeField] GameObject Barrel;
+    [SerializeField] PlayerVisualController playerVisualController;
 
     [SerializeField] List<PlayerWeapon> OwnedWeapons = new List<PlayerWeapon>();
     PlayerWeapon currentWeapon = null;
@@ -16,15 +17,26 @@ public class PlayerWeaponController : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P)) if (basicWeapon != null) AcquireWeapon(basicWeapon);
-        if (Input.GetKeyDown(KeyCode.O)) if (secondWeapon != null) AcquireWeapon(secondWeapon);
+        if (Input.GetKeyDown(KeyCode.Tab)) SetIsHoldingWeapon(!IsHoldingWeapon);
         if (Input.GetKeyDown(KeyCode.K)) TryUseWeapon();
         if (Input.GetKeyDown(KeyCode.E)) SwitchToNextWeapon();
         if (Input.GetKeyDown(KeyCode.Q)) SwitchToPreviousWeapon();
     }
+    void Start()
+    {
+        if(OwnedWeapons.Count > 0)
+        {
+            SwitchToWeapon(0);
+        }
+
+        ReinitalizeCooldownDictionary();
+        SetIsHoldingWeapon(IsHoldingWeapon);
+    }
 
     bool TryUseWeapon()
     {
+        if (IsHoldingWeapon == false) return false;
+
         if (currentWeapon == null) return false;
         if (dic_nextAvaibleTime.TryGetValue(currentWeapon.ID, out float nextAvaibleTime) == false) return false;
         if (nextAvaibleTime > Time.time) return false;
@@ -94,12 +106,15 @@ public class PlayerWeaponController : MonoBehaviour
         currentWeaponIndex = index;
         currentWeapon = OwnedWeapons[index];
         Barrel.transform.localPosition = currentWeapon.BarrelOffset;
+        playerVisualController.SetWeaponSprite(currentWeapon.WeaponSprite);
 
         return true;
     }
     public bool IndexIsValid(int index) => OwnedWeapons.Count > index && index >= 0;
     public void SwitchToNextWeapon()
     {
+        if (IsHoldingWeapon == false) return;
+
         int index = currentWeaponIndex + 1;
 
         if (IndexIsValid(index)) SwitchToWeapon(index);
@@ -107,9 +122,25 @@ public class PlayerWeaponController : MonoBehaviour
     }
     public void SwitchToPreviousWeapon()
     {
+        if (IsHoldingWeapon == false) return;
+
         int index = currentWeaponIndex - 1;
 
         if (IndexIsValid(index)) SwitchToWeapon(index);
         else SwitchToWeapon(OwnedWeapons.Count - 1);
+    }
+    public void SetIsHoldingWeapon(bool setTo)
+    {
+        IsHoldingWeapon = setTo;
+        playerVisualController?.SetHoldingWeapon(setTo);
+    }
+    public void ReinitalizeCooldownDictionary()
+    {
+        dic_nextAvaibleTime = new Dictionary<string, float>();
+
+        foreach(PlayerWeapon pw in OwnedWeapons)
+        {
+            dic_nextAvaibleTime[pw.ID] = -1;
+        }
     }
 }

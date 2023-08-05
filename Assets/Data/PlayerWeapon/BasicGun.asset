@@ -18,5 +18,5 @@ MonoBehaviour:
   _damage: 1
   _fireCooldown: 1
   _barrelOffset: {x: 0.5, y: 0}
-  _weaponSprite: {fileID: 0}
+  _weaponSprite: {fileID: 21300000, guid: 4656e9f253d82b44387d15a69577abec, type: 3}
   _projectile: {fileID: 0}
