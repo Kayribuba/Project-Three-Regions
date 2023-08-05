@@ -8,6 +8,7 @@ public class Projectile_Player : Projectile_Base
     {
         if (isInitalized == false) return;
         if (collision.gameObject.tag == "Player") return;
+        if (collision.gameObject.tag == gameObject.tag) return;
 
         if(DestroyEffect != null)
         {

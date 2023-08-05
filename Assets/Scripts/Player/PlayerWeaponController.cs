@@ -21,6 +21,8 @@ public class PlayerWeaponController : MonoBehaviour
 
     bool PressedFireButton = false;
     bool HoldingFireButton = false;
+    bool BurstOver = false;
+    bool BurstHasRefired = true;
     int FireIteration = 0;
 
     KeyCode FireButton = KeyCode.K;
@@ -40,18 +42,31 @@ public class PlayerWeaponController : MonoBehaviour
         {
             HoldingFireButton = false;
             FireIteration = 0;
+
+            if(currentWeapon.FiringType == FireType.Burst && BurstHasRefired && BurstOver == false)
+            {
+                dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.BurstCooldown;
+                BurstHasRefired = false;
+            }
+
+            BurstOver = false;
         }
 
         if(PressedFireButton || 
             (HoldingFireButton && currentWeapon.FiringType == FireType.Automatic) ||
-            (HoldingFireButton && currentWeapon.FiringType == FireType.Burst && currentWeapon.BurstAmmoCount > FireIteration))
+            (HoldingFireButton && currentWeapon.FiringType == FireType.Burst && BurstOver == false && (FireIteration != 0 || PressedFireButton)))
         {
-
             bool didFiredWeapon = TryUseWeapon();
 
             if (currentWeapon.FiringType == FireType.Burst && didFiredWeapon)
             {
                 FireIteration++;
+
+                if(FireIteration >= currentWeapon.BurstAmmoCount) 
+                {
+                    dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.BurstCooldown;
+                    BurstOver = true; 
+                }
             }
         }
 
@@ -86,11 +101,12 @@ public class PlayerWeaponController : MonoBehaviour
 
             if(instProjectile.TryGetComponent(out Projectile_Base outProjectile))
             {
-                outProjectile.Initalize(FireDirection, currentWeapon);
+                outProjectile.Initalize(FireDirection, currentWeapon, "PlayerProjectile");
             }
         }
 
         dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.FireCooldown;
+        BurstHasRefired = true;
 
         return true;
     }

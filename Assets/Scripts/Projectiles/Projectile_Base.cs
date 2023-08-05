@@ -7,8 +7,8 @@ using UnityEngine;
 public abstract class Projectile_Base : MonoBehaviour
 {
     [SerializeField] internal GameObject DestroyEffect;
-    [SerializeField] internal float damageMultiplier = 1;
-    [SerializeField] internal float speedMultiplier = 1;
+    [SerializeField] internal float _damageMultiplier = 1;
+    [SerializeField] internal float _speedMultiplier = 1;
     [SerializeField] internal float lifeTime = 10;
 
     internal PlayerWeapon weaponData;
@@ -20,7 +20,7 @@ public abstract class Projectile_Base : MonoBehaviour
     {
         Destroy(gameObject, lifeTime);
     }
-    public virtual void Initalize(Vector2 direction, PlayerWeapon weaponData)
+    public virtual void Initalize(Vector2 direction, PlayerWeapon weaponData, string tagToGive = null)
     {
         if (isInitalized) return;
 
@@ -31,11 +31,14 @@ public abstract class Projectile_Base : MonoBehaviour
 
         rb.gravityScale = 0;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-        rb.velocity = direction.normalized * GLOBAL.ProjectileSpeed * speedMultiplier;
+        rb.velocity = direction.normalized * GLOBAL.ProjectileSpeed * _speedMultiplier;
 
         col.isTrigger = true;
 
         this.weaponData = weaponData;
+
+        if (tagToGive != null)
+            gameObject.tag = tagToGive;
 
         isInitalized = true;
     }
