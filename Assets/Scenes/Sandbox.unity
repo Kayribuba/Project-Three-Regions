@@ -301,9 +301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0c377c79ff43984cb4169f61f2f74f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animators:
-  - {fileID: 1285188654}
-  spriteRenderer: {fileID: 1935700156}
+  animator: {fileID: 1285188654}
+  weaponSR: {fileID: 1935700156}
   VisualGO: {fileID: 1285188651}
   WeaponVisualGO: {fileID: 1935700154}
 --- !u!114 &85349267

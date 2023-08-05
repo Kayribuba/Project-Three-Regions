@@ -4,40 +4,79 @@ using UnityEngine;
 
 public class PlayerVisualController : MonoBehaviour
 {
-    [SerializeField] Animator[] animators;
-    [SerializeField] SpriteRenderer spriteRenderer;
+    [SerializeField] Animator animator;
+    [SerializeField] SpriteRenderer weaponSR;
     [SerializeField] GameObject VisualGO;
     [SerializeField] GameObject WeaponVisualGO;
 
-    [SerializeField] Animation anim;
+    float velocity = 0;
+    bool isGrounded = false;
+    bool isHoldingWeapon = false;
+
+
+    string currentAnimState;
+    const string PlayerIdle = "Player_Idle";
+    const string PlayerIdleGun = "Player_GunIdle";
+    const string PlayerWalk = "Player_Walk";
+    const string PlayerWalkGun = "Player_GunWalk";
+    const string PlayerJump = "Player_Jump";
+    const string PlayerJumpGun = "Player_GunJump";
 
     public void SetIsGrounded(bool isGrounded)
     {
-        foreach(Animator a in animators)
-        {
-            a.SetBool("grounded", isGrounded);
-        }
+        this.isGrounded = isGrounded;
+        EvaluateAnimState();
     }
     public void SetVelocity(float velocity)
     {
-        foreach (Animator a in animators)
-        {
-            a.SetFloat("velocity", Mathf.Abs(velocity));
-        }
+        this.velocity = velocity;
+        EvaluateAnimState();
     }
     public void SetHoldingWeapon(bool isHoldingWeapon)
     {
-        foreach (Animator a in animators)
-        {
-            a.SetBool("isHoldingWeapon", isHoldingWeapon);
-        }
+        this.isHoldingWeapon = isHoldingWeapon;
 
         WeaponVisualGO.SetActive(isHoldingWeapon);
+
+        EvaluateAnimState();
     }
     public void SetWeaponSprite(Sprite weaponSprite)
     {
-        if (spriteRenderer == null) return;
+        if (weaponSR == null) return;
 
-        spriteRenderer.sprite = weaponSprite;
+        weaponSR.sprite = weaponSprite;
+    }
+
+
+    void EvaluateAnimState()
+    {
+        string targetState = "";
+
+        if(isGrounded)
+        {
+            if(Mathf.Abs(velocity) > .1f)
+            {
+                targetState = isHoldingWeapon ? PlayerWalkGun : PlayerWalk;
+            }
+            else
+            {
+                targetState = isHoldingWeapon ? PlayerIdleGun : PlayerIdle;
+            }
+        }
+        else
+        {
+            targetState = isHoldingWeapon ? PlayerJumpGun : PlayerJump;
+        }
+
+        ChangeAnimationState(targetState);
+    }
+    void ChangeAnimationState(string setTo)
+    {
+        if (setTo == "") return;
+        if (setTo == currentAnimState) return;
+
+        animator.Play(setTo);
+
+        currentAnimState = setTo;
     }
 }
