@@ -27,8 +27,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Reference")]
     [SerializeField] LayerMask GroundLayers;
+    [SerializeField] GameObject Barrel;
+    [SerializeField] GameObject Visuals;
     [SerializeField] Transform GroundCheck;
     [SerializeField] Rigidbody2D rb;
+    [SerializeField] PlayerWeaponController playerWeaponController;
 
     [Header("Animation Events")]
     [SerializeField] UnityEvent<bool> UE_Grounded;
