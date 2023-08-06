@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float gravityScale = 10;
     [SerializeField] float coyoteTimeWindow = 0.1f;
     [SerializeField] float coyoteJumpWindow = 0.05f;
-    [SerializeField] float groundCheckRadius = .1f;
+    [SerializeField] Vector2 groundCheckRadius = Vector2.one * .2f;
     [SerializeField, Min(0)] float jumpCancelPower = 1.5f;
 
     [Header("Reference")]
@@ -65,8 +65,8 @@ public class PlayerController : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
-        jumpPressedDown = Input.GetKeyDown(KeyCode.Space);
-        jumpPressedUp = Input.GetKeyUp(KeyCode.Space);
+        jumpPressedDown = Input.GetButtonDown("Jump");
+        jumpPressedUp = Input.GetButtonUp("Jump");
 
         if (jumpPressedDown) targetTime_CoyoteJump = Time.time + coyoteJumpWindow;
         else if (jumpPressedUp) targetTime_CoyoteJump = -1;
@@ -133,7 +133,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGround()
     {
-        if (Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, GroundLayers))
+        if (Physics2D.OverlapBox(GroundCheck.position, groundCheckRadius, 0, GroundLayers))
         {
             isGrounded = true;
             targetTime_CoyoteTime = Time.time + coyoteTimeWindow;
@@ -170,6 +170,6 @@ public class PlayerController : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(GroundCheck.position, groundCheckRadius);
+        Gizmos.DrawWireCube(GroundCheck.position, groundCheckRadius);
     }
 }

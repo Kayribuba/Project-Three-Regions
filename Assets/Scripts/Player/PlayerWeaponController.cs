@@ -25,20 +25,18 @@ public class PlayerWeaponController : MonoBehaviour
     bool BurstHasRefired = true;
     int FireIteration = 0;
 
-    KeyCode FireButton = KeyCode.K;
-
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab)) SetIsHoldingWeapon(!IsHoldingWeapon);
-        if (Input.GetKeyDown(KeyCode.E)) SwitchToNextWeapon();
-        if (Input.GetKeyDown(KeyCode.Q)) SwitchToPreviousWeapon();
+        //if (Input.GetKeyDown(KeyCode.Tab)) SetIsHoldingWeapon(!IsHoldingWeapon);
+        if (Input.GetButtonDown("WeaponNext")) SwitchToNextWeapon();
+        if (Input.GetButtonDown("WeaponPrevious")) SwitchToPreviousWeapon();
 
-        if (Input.GetKeyDown(FireButton))
+        if (Input.GetButtonDown("Fire"))
         {
             PressedFireButton = true;
             HoldingFireButton = true;
         }
-        if (Input.GetKeyUp(FireButton))
+        if (Input.GetButtonUp("Fire"))
         {
             HoldingFireButton = false;
             FireIteration = 0;
@@ -80,7 +78,6 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         ReinitalizeCooldownDictionary();
-        SetIsHoldingWeapon(IsHoldingWeapon);
     }
 
     bool TryUseWeapon()
@@ -170,6 +167,7 @@ public class PlayerWeaponController : MonoBehaviour
         currentWeapon = OwnedWeapons[index];
         Barrel.transform.localPosition = currentWeapon.BarrelOffset;
         playerVisualController.SetWeaponSprite(currentWeapon.WeaponSprite);
+        SetIsHoldingWeapon(true);
 
         return true;
     }
