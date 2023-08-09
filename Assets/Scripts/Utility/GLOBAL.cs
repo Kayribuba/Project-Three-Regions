@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class GLOBAL
 {
-    public static float ProjectileSpeed = 12;
+    public static float ProjectileSpeed = 15;
 }

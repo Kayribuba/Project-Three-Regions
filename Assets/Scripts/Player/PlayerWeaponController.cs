@@ -41,31 +41,34 @@ public class PlayerWeaponController : MonoBehaviour
             HoldingFireButton = false;
             FireIteration = 0;
 
-            if(currentWeapon.FiringType == FireType.Burst && BurstHasRefired && BurstOver == false)
+            if (IsHoldingWeapon && currentWeapon.FiringType == FireType.Burst && BurstHasRefired && BurstOver == false)
             {
                 dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.BurstCooldown;
-                BurstHasRefired = false;
             }
 
+            BurstHasRefired = false;
             BurstOver = false;
         }
 
-        if(PressedFireButton || 
-            (HoldingFireButton && currentWeapon.FiringType == FireType.Automatic) ||
-            (HoldingFireButton && currentWeapon.FiringType == FireType.Burst && BurstOver == false && (FireIteration != 0 || PressedFireButton)))
+        if (IsHoldingWeapon)
         {
-            bool didFiredWeapon = TryUseWeapon();
-
-            if (currentWeapon.FiringType == FireType.Burst && didFiredWeapon)
+            if (PressedFireButton ||
+                (HoldingFireButton && currentWeapon.FiringType == FireType.Automatic) ||
+                (HoldingFireButton && currentWeapon.FiringType == FireType.Burst && BurstOver == false && (FireIteration != 0 || PressedFireButton)))
             {
-                FireIteration++;
+                bool didFiredWeapon = TryUseWeapon();
 
-                if(FireIteration >= currentWeapon.BurstAmmoCount) 
+                if (currentWeapon.FiringType == FireType.Burst && didFiredWeapon)
                 {
-                    dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.BurstCooldown;
-                    BurstOver = true; 
+                    FireIteration++;
+
+                    if (FireIteration >= currentWeapon.BurstAmmoCount)
+                    {
+                        dic_nextAvaibleTime[currentWeapon.ID] = Time.time + currentWeapon.BurstCooldown;
+                        BurstOver = true;
+                    }
                 }
-            }
+            } 
         }
 
         PressedFireButton = false;
