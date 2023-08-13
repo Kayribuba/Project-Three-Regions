@@ -1,14 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "PlayerWeapon")]
 public class PlayerWeapon : ScriptableObject
 {
-    [SerializeField] string _ID = "[UNASSIGNED]";
-    [SerializeField] string _displayName = "[UNASSIGNED]";
-    [SerializeField] string _weaponDescription = "[UNASSIGNED]";
+    [SerializeField] string _ID = GLOBAL.UnnasignedString;
+    [SerializeField] string _displayName = GLOBAL.UnnasignedString;
+    [SerializeField] string _weaponDescription = GLOBAL.UnnasignedString;
     [SerializeField] float _damage = 1;
     [SerializeField] float _fireCooldown = 1;
     [SerializeField] FireType _firingType = FireType.Single;

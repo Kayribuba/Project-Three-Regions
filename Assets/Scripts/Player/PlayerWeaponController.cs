@@ -145,7 +145,7 @@ public class PlayerWeaponController : MonoBehaviour
     }
     public void AcquireWeapon(PlayerWeapon weapon)
     {
-        if (weapon.ID == "[UNASSIGNED]") Debug.LogError("Cannot acquire a weapon with unassigned ID");
+        if (weapon.ID == GLOBAL.UnnasignedString) Debug.LogError("Cannot acquire a weapon with unassigned ID");
         if (WeaponOwned(weapon)) return;
 
         OwnedWeapons.Add(weapon);
