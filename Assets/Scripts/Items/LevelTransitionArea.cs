@@ -25,7 +25,14 @@ public class LevelTransitionArea : MonoBehaviour
 
     public void SpawnHere(GameObject Player)
     {
-        Player.transform.position = SpawnPoint.position;
+        if(Player.TryGetComponent(out PlayerController pc))
+        {
+            pc.SpawnPlayer(SpawnPoint.position);
+        }
+        else
+        {
+            Player.transform.position = SpawnPoint.position;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)

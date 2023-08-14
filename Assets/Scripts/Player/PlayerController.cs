@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
     bool jumpPressedDown;
     bool jumpPressedUp;
 
+    bool overrideVelocity;
+    float overrideDisableTime = float.MaxValue;
+
     float targetTime_CoyoteJump = -1;
     float targetTime_CoyoteTime = -1;
 
@@ -61,9 +64,27 @@ public class PlayerController : MonoBehaviour
         IntensifyGravityScale();
     }
 
-    private void GetInput()
+    public void SpawnPlayer(Vector2 position)
+    {
+        transform.position = position;
+
+        overrideVelocity = true;
+        overrideDisableTime = Time.time + .2f;
+    }
+
+    bool isHoldingHorizontalInput;
+    void GetInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
+        isHoldingHorizontalInput = Input.GetButton("Horizontal");
+
+        if (overrideVelocity == true)
+        {
+            if(horizontalInput != 0)
+            { overrideVelocity = false; }
+
+            overrideVelocity = false;
+        }
 
         jumpPressedDown = Input.GetButtonDown("Jump");
         jumpPressedUp = Input.GetButtonUp("Jump");
@@ -72,7 +93,7 @@ public class PlayerController : MonoBehaviour
         else if (jumpPressedUp) targetTime_CoyoteJump = -1;
     }
 
-    private void ApplyMovement()
+    void ApplyMovement()
     {
         Vector2 targetVelocity = Vector2.zero;
         rbVelocityHash = rb.velocity;
@@ -80,7 +101,11 @@ public class PlayerController : MonoBehaviour
 
         targetVelocity.y = rbVelocityHash.y;
 
-        if (Mathf.Abs(horizontalInput) > 0)//accelerate
+        if (overrideVelocity)
+        {
+            targetVelocity.x = rb.velocity.x;
+        }
+        else if (Mathf.Abs(horizontalInput) > 0)//accelerate
         {
             float airBonus = isGrounded ? 1 : airSpeedModifier;
             hMovementThisFrame = maxSpeed / accelerationTime * airBonus * Time.deltaTime * horizontalInput;
@@ -131,12 +156,15 @@ public class PlayerController : MonoBehaviour
         rb.velocity = targetVelocity;
     }
 
-    private void CheckGround()
+    void CheckGround()
     {
         if (Physics2D.OverlapBox(GroundCheck.position, groundCheckRadius, 0, GroundLayers))
         {
             isGrounded = true;
             targetTime_CoyoteTime = Time.time + coyoteTimeWindow;
+
+            if (isHoldingHorizontalInput == false)
+            { overrideVelocity = false; }
         }
         else if (targetTime_CoyoteTime >= Time.time)
         {

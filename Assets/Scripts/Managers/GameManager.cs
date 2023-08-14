@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,8 +9,9 @@ public class GameManager : MonoBehaviour
     public LevelManager LevelManager { get { return _levelManager; } }
     [SerializeField] LevelManager _levelManager;
 
-
     public static GameObject Player { get; private set; } = null;
+
+    bool justInitalized = true;
 
     void Awake()
     {
@@ -25,12 +27,18 @@ public class GameManager : MonoBehaviour
 
         SetPlayer();
     }
-    void OnLevelWasLoaded(int level)
+    public void SceneWasLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        if(justInitalized)
+        {
+            justInitalized = false;
+            return;
+        }
+
         GatherTransitors();
     }
 
-    private void GatherTransitors()
+    void GatherTransitors()
     {
         if (LevelManager == null) return;
         string spawnerID = LevelManager.SpawnerID;
@@ -69,7 +77,14 @@ public class GameManager : MonoBehaviour
         GameObject go = GameObject.FindGameObjectWithTag("DefaultSpawnPosition");
         Vector2 spawnAt = go != null ? (Vector2)go.transform.position : GLOBAL.DefaultSpawnPosition;
 
-        Player.transform.position = spawnAt;
+        if (Player.TryGetComponent(out PlayerController pc))
+        {
+            pc.SpawnPlayer(spawnAt);
+        }
+        else
+        {
+            Player.transform.position = spawnAt;
+        }
     }
 
     void SetPlayer()
