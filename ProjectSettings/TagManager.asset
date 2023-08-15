@@ -16,11 +16,11 @@ TagManager:
   - UI
   - Ground
   - Player
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Enemy
+  - Transition
+  - Item
+  - Interactable
+  - Overlay
   - 
   - 
   - 
@@ -41,6 +41,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 3298402311
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
@@ -49,4 +52,10 @@ TagManager:
     locked: 0
   - name: Projectile
     uniqueID: 2644897249
+    locked: 0
+  - name: Foreground
+    uniqueID: 1281128345
+    locked: 0
+  - name: Overlay
+    uniqueID: 1965994721
     locked: 0

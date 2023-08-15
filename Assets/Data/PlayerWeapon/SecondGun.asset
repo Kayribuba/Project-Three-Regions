@@ -20,6 +20,6 @@ MonoBehaviour:
   _firingType: 1
   _burstAmmoCount: 15
   _burstCooldown: 0.3
-  _barrelOffset: {x: 0.5625, y: 0.0625}
+  _barrelOffset: {x: 0.422, y: 0.0475}
   _weaponSprite: {fileID: 21300000, guid: 14cf6e79f717211469b9a27a8c76ddac, type: 3}
   _projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
