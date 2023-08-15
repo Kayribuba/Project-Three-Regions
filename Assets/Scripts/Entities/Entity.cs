@@ -6,8 +6,6 @@ using UnityEngine;
 public abstract class Entity : MonoBehaviour
 {
     [SerializeField] internal Rigidbody2D rb;
-    [SerializeField] internal Transform _barrel;
-    [SerializeField] internal GameObject _projectile;
     [SerializeField] internal float _maxHealth = 1;
     [SerializeField] internal float _damage = 1;
     [SerializeField] internal float _speed = 1;
@@ -25,13 +23,18 @@ public abstract class Entity : MonoBehaviour
         SetUpdateCoroutine(true);
     }
 
-    public void AddHealth(float amount) => SetHealth(_health + amount);
-    public void RemoveHealth(float amount) => SetHealth(_health - amount);
-    public void SetHealth(float SetTo)
+    public virtual void GetHealed(float heal)
     {
-        _health = Mathf.Clamp(SetTo, 0,_maxHealth);
+        _health = Mathf.Min(_health + heal, _maxHealth);
+    }
+    public virtual void GetDamaged(float damage)
+    {
+        _health = Mathf.Max(_health - damage, 0);
 
-        if (_health == 0) Die();
+        if (_health == 0)
+        {
+            Die();
+        }
     }
     public virtual void Die()
     {
