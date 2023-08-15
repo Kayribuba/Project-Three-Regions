@@ -91,9 +91,6 @@ public class PlayerWeaponController : MonoBehaviour
         if (dic_nextAvaibleTime.TryGetValue(currentWeapon.ID, out float nextAvaibleTime) == false) return false;
         if (nextAvaibleTime > Time.time) return false;
 
-        Debug.Log($"{currentWeapon.name} dýkþýn dýkþýn diyor");
-        StartCoroutine(BlinkAnimation(Barrel, false));
-
         if(currentWeapon.Projectile != null)
         {
             Quaternion targetRotation = GetDirectionAsRotation();

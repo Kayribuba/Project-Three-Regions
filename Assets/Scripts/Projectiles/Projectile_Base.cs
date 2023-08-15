@@ -11,6 +11,7 @@ public abstract class Projectile_Base : MonoBehaviour
     [SerializeField] internal float _speedMultiplier = 1;
     [SerializeField] internal float lifeTime = 10;
 
+    internal float Damage => weaponData == null ? 1 : weaponData.Damage * _damageMultiplier;
     internal PlayerWeapon weaponData;
     internal Rigidbody2D rb;
     internal Collider2D col;
@@ -41,5 +42,22 @@ public abstract class Projectile_Base : MonoBehaviour
             gameObject.tag = tagToGive;
 
         isInitalized = true;
+    }
+
+    internal virtual void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.isTrigger) return;
+
+        if (collision.TryGetComponent(out Entity entity))
+        {
+            entity.GetDamaged(Damage);
+        }
+
+        if (DestroyEffect != null)
+        {
+            Instantiate(DestroyEffect, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
     }
 }
