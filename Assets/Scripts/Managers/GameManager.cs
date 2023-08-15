@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public LevelManager LevelManager { get { return _levelManager; } }
     [SerializeField] LevelManager _levelManager;
 
-    public static GameObject Player { get; private set; } = null;
+    public GameObject Player { get; private set; } = null;
 
     bool justInitalized = true;
 
