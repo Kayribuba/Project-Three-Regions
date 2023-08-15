@@ -83,7 +83,8 @@ public class PlayerController : MonoBehaviour
             if(horizontalInput != 0)
             { overrideVelocity = false; }
 
-            overrideVelocity = false;
+            if(isHoldingHorizontalInput == false && isGrounded && overrideDisableTime < Time.time)
+            { overrideVelocity = false; }
         }
 
         jumpPressedDown = Input.GetButtonDown("Jump");
@@ -163,8 +164,7 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
             targetTime_CoyoteTime = Time.time + coyoteTimeWindow;
 
-            if (isHoldingHorizontalInput == false)
-            { overrideVelocity = false; }
+            overrideVelocity = false;
         }
         else if (targetTime_CoyoteTime >= Time.time)
         {
