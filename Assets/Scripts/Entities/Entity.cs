@@ -23,18 +23,13 @@ public abstract class Entity : MonoBehaviour
         SetUpdateCoroutine(true);
     }
 
-    public virtual void GetHealed(float heal)
+    public virtual void AddHealth(float amount) => SetHealth(_health + amount);
+    public virtual void RemoveHealth(float amount) => SetHealth(_health - amount);
+    public void SetHealth(float setTo)
     {
-        _health = Mathf.Min(_health + heal, _maxHealth);
-    }
-    public virtual void GetDamaged(float damage)
-    {
-        _health = Mathf.Max(_health - damage, 0);
+        _health = Mathf.Clamp(setTo, 0, _maxHealth);
 
-        if (_health == 0)
-        {
-            Die();
-        }
+        if (_health == 0) Die();
     }
     public virtual void Die()
     {

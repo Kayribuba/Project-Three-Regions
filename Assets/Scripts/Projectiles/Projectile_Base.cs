@@ -50,7 +50,7 @@ public abstract class Projectile_Base : MonoBehaviour
 
         if (collision.TryGetComponent(out Entity entity))
         {
-            entity.GetDamaged(Damage);
+            entity.RemoveHealth(Damage);
         }
 
         if (DestroyEffect != null)
