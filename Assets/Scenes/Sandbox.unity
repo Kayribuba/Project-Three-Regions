@@ -226,11 +226,19 @@ MonoBehaviour:
   _damage: 1
   _speed: 5
   tickRate: 0.03
+  SightObstructionLayers:
+    serializedVersion: 2
+    m_Bits: 192
+  WarnedEffect: {fileID: 1327461475167692991, guid: 013906d24683b8e488f4720e14b16ee1, type: 3}
+  WarnedEffectPoint: {fileID: 681022785}
   downCheck: {fileID: 1243213844}
   sideCheck: {fileID: 1507513723}
+  attackCooldown: 1
+  sightRadius: 5
   downCheckRange: 0.2
   sideCheckSize: {x: 0.1, y: 0.9}
   pauseTime: 1
+  rememberTime: 1
 --- !u!50 &639851778
 Rigidbody2D:
   serializedVersion: 4
@@ -265,6 +273,7 @@ Transform:
   m_Children:
   - {fileID: 1243213844}
   - {fileID: 1507513723}
+  - {fileID: 681022785}
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -345,6 +354,36 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &681022784
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 681022785}
+  m_Layer: 0
+  m_Name: AwarenessPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &681022785
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681022784}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.51, y: 0.47, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 639851779}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &904241597
 GameObject:
   m_ObjectHideFlags: 0
