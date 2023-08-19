@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4363495044772854016}
-  - component: {fileID: 51915332679250936}
   - component: {fileID: 4363495044772854019}
+  - component: {fileID: -5681421283028886680}
   - component: {fileID: 4363495044772854018}
   - component: {fileID: 300087004191601895}
   m_Layer: 0
@@ -34,22 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &51915332679250936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4363495044772854021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f270c1f81886dbb42811c5584d5bd671, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DestroyEffect: {fileID: 4869431076926577726, guid: 9da86aba1427b8f498ba1876de74fcb6, type: 3}
-  _damageMultiplier: 1
-  _speedMultiplier: 1
-  lifeTime: 10
 --- !u!212 &4363495044772854019
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -101,6 +85,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-5681421283028886680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4363495044772854021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b47c71f2d8edc7e4a83c0040f92adfc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestroyEffect: {fileID: 4869431076926577726, guid: 9da86aba1427b8f498ba1876de74fcb6, type: 3}
+  _damageMultiplier: 1
+  _speedMultiplier: 1
+  lifeTime: 10
 --- !u!58 &4363495044772854018
 CircleCollider2D:
   m_ObjectHideFlags: 0

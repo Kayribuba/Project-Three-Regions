@@ -82,6 +82,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c03f6eb8568634ab667b3099c2158f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 4019480505570119}
+  _maxHealth: 10
+  _damage: 1
+  _speed: 1
+  tickRate: 0
   accelerationTime: 0.1
   decelerationTime: 0.2
   airSpeedModifier: 0.5
@@ -91,7 +96,7 @@ MonoBehaviour:
   gravityScale: 3
   coyoteTimeWindow: 0.1
   coyoteJumpWindow: 0.1
-  groundCheckRadius: {x: 0.49, y: 0.1}
+  groundCheckRadius: {x: 0.47, y: 0.1}
   jumpCancelPower: 1
   GroundLayers:
     serializedVersion: 2
@@ -99,7 +104,6 @@ MonoBehaviour:
   Barrel: {fileID: 4019479873123679}
   Visuals: {fileID: 4019481420197090}
   GroundCheck: {fileID: 4019480524471415}
-  rb: {fileID: 4019480505570119}
   playerWeaponController: {fileID: 4019480505570138}
   UE_Grounded:
     m_PersistentCalls:

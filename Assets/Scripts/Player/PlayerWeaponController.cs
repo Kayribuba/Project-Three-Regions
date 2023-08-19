@@ -96,9 +96,9 @@ public class PlayerWeaponController : MonoBehaviour
             Quaternion targetRotation = GetDirectionAsRotation();
             GameObject instProjectile = Instantiate(currentWeapon.Projectile, Barrel.transform.position, targetRotation);
 
-            if(instProjectile.TryGetComponent(out Projectile_Base outProjectile))
+            if(instProjectile.TryGetComponent(out Projectile outProjectile))
             {
-                outProjectile.Initalize(FireDirection, currentWeapon, "PlayerProjectile");
+                outProjectile.Initalize(FireDirection, true, currentWeapon.Damage, new string[] { "Player" });
             }
         }
 

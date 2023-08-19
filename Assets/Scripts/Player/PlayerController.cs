@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : Entity
 {
     public Vector3 forwardVector { get; private set; }
     public bool isFacingLeft { get; private set; }
@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject Barrel;
     [SerializeField] GameObject Visuals;
     [SerializeField] Transform GroundCheck;
-    [SerializeField] Rigidbody2D rb;
     [SerializeField] PlayerWeaponController playerWeaponController;
 
     [Header("Animation Events")]
@@ -49,12 +48,14 @@ public class PlayerController : MonoBehaviour
 
     Vector2 rbVelocityHash = Vector2.zero;
 
-    void Start()
+    public override void Start()
     {
-        if (rb == null)
-            rb = GetComponent<Rigidbody2D>();
+        _health = _maxHealth;
 
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = gravityScale;
+
+        SetUpdateCoroutine(false);
     }
     void Update()
     {
@@ -200,4 +201,6 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(GroundCheck.position, groundCheckRadius);
     }
+
+    internal override void UpdateBehaviour(){}//Bok gib kod HIHIHIHA
 }
