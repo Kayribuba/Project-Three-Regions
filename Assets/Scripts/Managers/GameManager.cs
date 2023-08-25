@@ -7,15 +7,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public LevelManager LevelManager { get { return _levelManager; } }
-    [SerializeField] LevelManager _levelManager;
-
+    public VisualManager VisualManager { get { return _visualManager; } }
     public GameObject Player { get; private set; } = null;
+    public bool GameIsOver { get; private set; } = false;
+
+    [SerializeField] LevelManager _levelManager;
+    [SerializeField] VisualManager _visualManager;
 
     bool justInitalized = true;
 
     void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -29,13 +32,26 @@ public class GameManager : MonoBehaviour
     }
     public void SceneWasLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if(justInitalized)
+        if (justInitalized)
         {
             justInitalized = false;
             return;
         }
 
+        SetPlayer();
         GatherTransitors();
+    }
+    public void EndGameInSeconds(float seconds)
+    {
+        Invoke(nameof(EndGame), seconds);
+    }
+    public void EndGame()
+    {
+        if (GameIsOver) return;
+
+        VisualManager.SetGameOver(true);
+
+        GameIsOver = true;
     }
 
     void GatherTransitors()
@@ -91,13 +107,18 @@ public class GameManager : MonoBehaviour
     {
         PlayerController[] tempArray = FindObjectsOfType<PlayerController>();
 
-        if (Player == null)
+        if (Player == null && tempArray[0] != null)
         {
-            PlayerController temp = tempArray[0];
-            if(temp != null)
+            foreach (PlayerController temp in tempArray)
             {
-                Player = temp.gameObject;
+                if (temp.isOld)
+                {
+                    Player = temp.gameObject;
+                    break;
+                }
             }
+
+            if (Player == null) Player = tempArray[0].gameObject;
         }
 
         if (Player != null)
@@ -110,7 +131,14 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            DontDestroyOnLoad(Player);
+            if (Player.TryGetComponent(out PlayerController pCont))
+            {
+                if (pCont.isOld == false)
+                {
+                    DontDestroyOnLoad(Player);
+                    pCont.isOld = true;
+                }
+            }
         }
     }
 }

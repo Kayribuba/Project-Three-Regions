@@ -89,8 +89,6 @@ public class Entity_Walker : Entity
 
     void Walk()
     {
-        Debug.Log("walk");
-
         GroundCheck(out bool hitDown, out bool hitSide);
 
         if(hitDown == false)
@@ -121,12 +119,24 @@ public class Entity_Walker : Entity
     }
     void Attack()
     {
-        Debug.Log("Attacking");
+        Vector2 transformPos = transform.position;
+        Vector2 sightDir = _playerPos - transformPos;
+        sightDir.Normalize();
 
+<<<<<<< Updated upstream
         if (nextAttackTime <= Time.time)
         {
             //attack here
             /*GameObject instProj = Instantiate(_projectile, _barrel.transform.position, Quaternion.identity);
+=======
+        Vector2 barrelPos = transformPos + (sightDir * barrelDistance);
+
+        if (Vector2.Dot(sightDir, direction) < 0) Turn();
+
+        if (nextAttackTime <= Time.time && _projectile != null)//attack here
+        {
+            GameObject instProj = Instantiate(_projectile, barrelPos, Quaternion.identity);
+>>>>>>> Stashed changes
             if (instProj.TryGetComponent(out Projectile outProj))
             {
                 //outProj.Initalize(direction, );

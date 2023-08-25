@@ -25,6 +25,8 @@ public class LevelTransitionArea : MonoBehaviour
 
     public void SpawnHere(GameObject Player)
     {
+        if (Player == null) return;
+
         if(Player.TryGetComponent(out PlayerController pc))
         {
             pc.SpawnPlayer(SpawnPoint.position);

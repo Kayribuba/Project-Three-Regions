@@ -6,6 +6,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : Entity
 {
+    public bool isOld;
     public Vector3 forwardVector { get; private set; }
     public bool isFacingLeft { get; private set; }
     public bool isGrounded { get; private set; }
@@ -48,6 +49,8 @@ public class PlayerController : Entity
 
     Vector2 rbVelocityHash = Vector2.zero;
 
+    int hihihiha = 0;
+
     public override void Start()
     {
         _health = _maxHealth;
@@ -71,6 +74,11 @@ public class PlayerController : Entity
 
         overrideVelocity = true;
         overrideDisableTime = Time.time + .2f;
+    }
+    public override void Die()
+    {
+        GameManager.Instance.EndGame();
+        base.Die();
     }
 
     bool isHoldingHorizontalInput;
