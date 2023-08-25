@@ -8,6 +8,7 @@ public class Entity_Walker : Entity
 
 
     [SerializeField] LayerMask SightObstructionLayers = 1 << 6 | 1 << 7;
+    [SerializeField] GameObject _projectile;
     [SerializeField] GameObject WarnedEffect;
     [SerializeField] Transform WarnedEffectPoint;
     [SerializeField] Transform downCheck;
@@ -15,11 +16,25 @@ public class Entity_Walker : Entity
     [SerializeField] float attackCooldown = 1f;
     [SerializeField] float sightRadius = 5f;
     [SerializeField] float downCheckRange = .5f;
+    [SerializeField] float barrelDistance = .5f;
     [SerializeField] Vector2 sideCheckSize = Vector2.one;
     [SerializeField] float pauseTime = 1f;
     [SerializeField] float rememberTime = 1f;
 
     GameObject Player;
+    Vector2 _playerPos
+    {
+        get
+        {
+            if (Player == null)
+            {
+                Player = GameManager.Instance.Player;
+            }
+
+            if (Player == null) return Vector2.zero;
+            else return Player.transform.position;
+        }
+    }
 
     WalkerBehaviour currentBeh = WalkerBehaviour.Walking;
     Vector2 direction => isFacingLeft ? Vector2.left : Vector2.right;
@@ -56,19 +71,11 @@ public class Entity_Walker : Entity
 
     bool TrySeePlayer()
     {
-        if (Player == null)
-        {
-            Player = GameManager.Instance.Player;
-
-            if (Player == null) return false;
-        }
-
-        Vector2 playerPos = Player.transform.position;
         Vector2 transformPos = transform.position;
 
-        if (Vector2.Distance(transformPos, playerPos) > sightRadius) return false;
+        if (Vector2.Distance(transformPos, _playerPos) > sightRadius) return false;
 
-        Vector2 sightDir = playerPos - transformPos;
+        Vector2 sightDir = _playerPos - transformPos;
         RaycastHit2D hit = Physics2D.Raycast(transformPos, sightDir, sightRadius, SightObstructionLayers);
 
         if (hit.collider == null) return false;
@@ -123,14 +130,20 @@ public class Entity_Walker : Entity
     {
         Debug.Log("Attacking");
 
-        if (nextAttackTime <= Time.time)
+        if (nextAttackTime <= Time.time)//attack here
         {
-            //attack here
-            /*GameObject instProj = Instantiate(_projectile, _barrel.transform.position, Quaternion.identity);
+            Vector2 transformPos = transform.position;
+
+            Vector2 sightDir = _playerPos - transformPos;
+            sightDir.Normalize();
+
+            Vector2 barrelPos = transformPos + (sightDir * barrelDistance);
+
+            GameObject instProj = Instantiate(_projectile, barrelPos, Quaternion.identity);
             if (instProj.TryGetComponent(out Projectile outProj))
             {
-                //outProj.Initalize(direction, );
-            }*/
+                outProj.Initalize(sightDir, false, _damage, new string[] { "Enemy" });
+            }
 
             nextAttackTime = Time.time + attackCooldown;
         }
