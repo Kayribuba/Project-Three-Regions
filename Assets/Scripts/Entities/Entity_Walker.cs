@@ -20,6 +20,19 @@ public class Entity_Walker : Entity
     [SerializeField] float rememberTime = 1f;
 
     GameObject Player;
+    Vector2 _playerPos
+    {
+        get
+        {
+            if (Player == null)
+            {
+                Player = GameManager.Instance.Player;
+
+                if (Player == null) return Vector2.zero;
+            }
+            return Player.transform.position;
+        }
+    }
 
     WalkerBehaviour currentBeh = WalkerBehaviour.Walking;
     Vector2 direction => isFacingLeft ? Vector2.left : Vector2.right;
@@ -117,18 +130,19 @@ public class Entity_Walker : Entity
             SwitchBehaviour(WalkerBehaviour.Walking);
         }
     }
+
     void Attack()
     {
+        /*
         Vector2 transformPos = transform.position;
         Vector2 sightDir = _playerPos - transformPos;
         sightDir.Normalize();
-
-<<<<<<< Updated upstream
+       
         if (nextAttackTime <= Time.time)
         {
             //attack here
-            /*GameObject instProj = Instantiate(_projectile, _barrel.transform.position, Quaternion.identity);
-=======
+            GameObject instProj = Instantiate(_projectile, _barrel.transform.position, Quaternion.identity);
+             
         Vector2 barrelPos = transformPos + (sightDir * barrelDistance);
 
         if (Vector2.Dot(sightDir, direction) < 0) Turn();
@@ -136,11 +150,10 @@ public class Entity_Walker : Entity
         if (nextAttackTime <= Time.time && _projectile != null)//attack here
         {
             GameObject instProj = Instantiate(_projectile, barrelPos, Quaternion.identity);
->>>>>>> Stashed changes
             if (instProj.TryGetComponent(out Projectile outProj))
             {
                 //outProj.Initalize(direction, );
-            }*/
+            } 
 
             nextAttackTime = Time.time + attackCooldown;
         }
@@ -149,6 +162,7 @@ public class Entity_Walker : Entity
         {
             SwitchBehaviour(WalkerBehaviour.Walking);
         }
+        */
     }
 
     void SwitchBehaviour(WalkerBehaviour switchTo)
