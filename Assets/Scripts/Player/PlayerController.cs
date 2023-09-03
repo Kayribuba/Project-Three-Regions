@@ -9,6 +9,7 @@ public class PlayerController : Entity
     public Vector3 forwardVector { get; private set; }
     public bool isFacingLeft { get; private set; }
     public bool isGrounded { get; private set; }
+    public bool isOld { get; private set; }
 
     [Header("Values")]
     [Tooltip("How long will fully accelerating take")]
@@ -50,7 +51,7 @@ public class PlayerController : Entity
 
     public override void Start()
     {
-        _health = _maxHealth;
+        b_health = b_maxHealth;
 
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = gravityScale;
@@ -65,6 +66,10 @@ public class PlayerController : Entity
         IntensifyGravityScale();
     }
 
+    public void PlayerIsSelected()
+    {
+        isOld = true;
+    }
     public void SpawnPlayer(Vector2 position)
     {
         transform.position = position;
@@ -76,23 +81,33 @@ public class PlayerController : Entity
     bool isHoldingHorizontalInput;
     void GetInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        isHoldingHorizontalInput = Input.GetButton("Horizontal");
+        //if(b_inputEnabled)
+        //{
+            horizontalInput = Input.GetAxisRaw("Horizontal");
+            isHoldingHorizontalInput = Input.GetButton("Horizontal");
 
-        if (overrideVelocity == true)
-        {
-            if(horizontalInput != 0)
-            { overrideVelocity = false; }
+            if (overrideVelocity == true)
+            {
+                if (horizontalInput != 0)
+                { overrideVelocity = false; }
 
-            if(isHoldingHorizontalInput == false && isGrounded && overrideDisableTime < Time.time)
-            { overrideVelocity = false; }
-        }
+                if (isHoldingHorizontalInput == false && isGrounded && overrideDisableTime < Time.time)
+                { overrideVelocity = false; }
+            }
 
-        jumpPressedDown = Input.GetButtonDown("Jump");
-        jumpPressedUp = Input.GetButtonUp("Jump");
+            jumpPressedDown = Input.GetButtonDown("Jump");
+            jumpPressedUp = Input.GetButtonUp("Jump");
 
-        if (jumpPressedDown) targetTime_CoyoteJump = Time.time + coyoteJumpWindow;
-        else if (jumpPressedUp) targetTime_CoyoteJump = -1;
+            if (jumpPressedDown) targetTime_CoyoteJump = Time.time + coyoteJumpWindow;
+            else if (jumpPressedUp) targetTime_CoyoteJump = -1;
+        //}
+        //else
+        //{
+        //    horizontalInput = 0;
+        //    isHoldingHorizontalInput = false;
+        //    jumpPressedDown = false;
+        //    jumpPressedUp = false;
+        //}
     }
 
     void ApplyMovement()
@@ -178,7 +193,7 @@ public class PlayerController : Entity
 
         UE_Grounded.Invoke(isGrounded);
     }
-    private void IntensifyGravityScale()
+    void IntensifyGravityScale()
     {
         if (rbVelocityHash.y < 0)
             rb.gravityScale = gravityScale + fallingAccelerationIntensity;
