@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +11,11 @@ public class Entity_Walker : Entity
     [SerializeField] LayerMask SightObstructionLayers = 1 << 6 | 1 << 7;
     [SerializeField] GameObject WarnedEffect;
     [SerializeField] Transform WarnedEffectPoint;
+    [SerializeField] GameObject _projectile;
+    [SerializeField] float barrelDistance = .5f;
     [SerializeField] Transform downCheck;
     [SerializeField] Transform sideCheck;
-    [SerializeField] float attackCooldown = 1f;
+    [SerializeField] float attackCooldown = .5f;
     [SerializeField] float sightRadius = 5f;
     [SerializeField] float downCheckRange = .5f;
     [SerializeField] Vector2 sideCheckSize = Vector2.one;
@@ -53,35 +56,33 @@ public class Entity_Walker : Entity
     {
         TrySeePlayer();
 
-        switch(currentBeh)
-        {
-            case WalkerBehaviour.Walking:
-                Walk();
-                break;
-            case WalkerBehaviour.Waiting:
-                Wait();
-                break;
-            case WalkerBehaviour.Attacking:
-                Attack();
-                break;
-        }
+        //if(b_inputEnabled)
+        //{
+            switch (currentBeh)
+            {
+                case WalkerBehaviour.Walking:
+                    Walk();
+                    break;
+                case WalkerBehaviour.Waiting:
+                    Wait();
+                    break;
+                case WalkerBehaviour.Attacking:
+                    Attack();
+                    break;
+            }
+        //}
     }
 
     bool TrySeePlayer()
     {
-        if (Player == null)
-        {
-            Player = GameManager.Instance.Player;
-
-            if (Player == null) return false;
-        }
-
-        Vector2 playerPos = Player.transform.position;
+        Vector2 playerPos = _playerPos;
         Vector2 transformPos = transform.position;
 
         if (Vector2.Distance(transformPos, playerPos) > sightRadius) return false;
 
         Vector2 sightDir = playerPos - transformPos;
+        sightDir.Normalize();
+
         RaycastHit2D hit = Physics2D.Raycast(transformPos, sightDir, sightRadius, SightObstructionLayers);
 
         if (hit.collider == null) return false;
@@ -104,7 +105,7 @@ public class Entity_Walker : Entity
     {
         GroundCheck(out bool hitDown, out bool hitSide);
 
-        if(hitDown == false)
+        if (hitDown == false)
         {
             SwitchBehaviour(WalkerBehaviour.Waiting);
             return;
@@ -116,15 +117,16 @@ public class Entity_Walker : Entity
         }
 
         Vector2 targetVel = rb.velocity;
-        targetVel.x = _speed * direction.x;
+        targetVel.x = b_speed * direction.x;
 
         rb.velocity = targetVel;
     }
 
     float waitExitTime = float.MaxValue;
+
     void Wait()
     {
-        if(waitExitTime <= Time.time)
+        if (waitExitTime <= Time.time)
         {
             Turn();
             SwitchBehaviour(WalkerBehaviour.Walking);
@@ -133,27 +135,21 @@ public class Entity_Walker : Entity
 
     void Attack()
     {
-        /*
         Vector2 transformPos = transform.position;
         Vector2 sightDir = _playerPos - transformPos;
         sightDir.Normalize();
-       
-        if (nextAttackTime <= Time.time)
-        {
-            //attack here
-            GameObject instProj = Instantiate(_projectile, _barrel.transform.position, Quaternion.identity);
-             
-        Vector2 barrelPos = transformPos + (sightDir * barrelDistance);
 
-        if (Vector2.Dot(sightDir, direction) < 0) Turn();
-
-        if (nextAttackTime <= Time.time && _projectile != null)//attack here
+        if (nextAttackTime <= Time.time && _projectile != null)//Attack time
         {
+            Vector2 barrelPos = transformPos + (sightDir * barrelDistance);
+
+            if (Vector2.Dot(sightDir, direction) < 0) Turn();
+
             GameObject instProj = Instantiate(_projectile, barrelPos, Quaternion.identity);
             if (instProj.TryGetComponent(out Projectile outProj))
             {
-                //outProj.Initalize(direction, );
-            } 
+                outProj.Initalize(sightDir, false, b_damage, new string[] { "Enemy" });
+            }
 
             nextAttackTime = Time.time + attackCooldown;
         }
@@ -162,7 +158,6 @@ public class Entity_Walker : Entity
         {
             SwitchBehaviour(WalkerBehaviour.Walking);
         }
-        */
     }
 
     void SwitchBehaviour(WalkerBehaviour switchTo)
@@ -197,7 +192,7 @@ public class Entity_Walker : Entity
                 waitExitTime = float.MaxValue;
                 break;
             case WalkerBehaviour.Attacking:
-                
+
                 break;
         }
 

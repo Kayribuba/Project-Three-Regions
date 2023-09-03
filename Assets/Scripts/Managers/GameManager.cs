@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] LevelManager _levelManager;
 
     public GameObject Player { get; private set; } = null;
+    public bool GameIsOver { get; private set; }
 
     bool justInitalized = true;
 
@@ -36,8 +37,18 @@ public class GameManager : MonoBehaviour
         }
 
         GatherTransitors();
+        SetPlayer();
     }
+    public void EndGameInSeconds(float seconds)
+    {
+        Invoke(nameof(EndGame), seconds);
+    }
+    public void EndGame()
+    {
+        if (GameIsOver) return;
 
+        GameIsOver = true;
+    }
     void GatherTransitors()
     {
         if (LevelManager == null) return;
@@ -89,15 +100,21 @@ public class GameManager : MonoBehaviour
 
     void SetPlayer()
     {
+        Player = null;
         PlayerController[] tempArray = FindObjectsOfType<PlayerController>();
 
-        if (Player == null)
+        if (tempArray[0] != null)
         {
-            PlayerController temp = tempArray[0];
-            if(temp != null)
+            foreach (PlayerController temp in tempArray)
             {
-                Player = temp.gameObject;
+                if (temp.isOld)
+                {
+                    Player = temp.gameObject;
+                    break;
+                }
             }
+
+            if (Player == null) Player = tempArray[0].gameObject;
         }
 
         if (Player != null)
@@ -110,7 +127,12 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            DontDestroyOnLoad(Player);
+            if(Player.TryGetComponent(out PlayerController pcont))
+            {
+                if(pcont.isOld == false) DontDestroyOnLoad(Player);
+                pcont.PlayerIsSelected();
+            }
+            
         }
     }
 }
