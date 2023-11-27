@@ -3,6 +3,18 @@ using UnityEngine.UI;
 
 public class ImageUtility : ComponentUtility<Image>
 {
+    Sprite defaultSprite;
+    Color defaultColor;
+
+    internal override void Start()
+    {
+        base.Start();
+
+        if (component.sprite != null) defaultSprite = component.sprite;
+
+        defaultColor = component.color;
+    }
+
     public void SetEnability(bool setTo)
     {
         if (isInitialized == false) return;
@@ -25,8 +37,20 @@ public class ImageUtility : ComponentUtility<Image>
     public void SetWeaponSprite(PlayerWeapon weapon)
     {
         if (isInitialized == false) return;
-        if (weapon == null) return;
-        if (weapon.WeaponIcon == null) return;
+
+        if(defaultSprite != null)
+        {
+            if (weapon == null)
+            {
+                component.sprite = defaultSprite;
+                return;
+            }
+            else if (weapon.WeaponIcon == null)
+            {
+                component.sprite = defaultSprite;
+                return;
+            }
+        }
 
         component.sprite = weapon.WeaponIcon;
     }

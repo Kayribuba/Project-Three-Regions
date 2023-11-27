@@ -12,12 +12,12 @@ public abstract class ComponentUtility<T> : MonoBehaviour
 
     internal bool isInitialized = false;
 
-    private void Start()
+    internal virtual void Start()
     {
         TryInitialize();
     }
 
-    public void TryInitialize()
+    public virtual void TryInitialize()
     {
         if (isInitialized) return;
 
