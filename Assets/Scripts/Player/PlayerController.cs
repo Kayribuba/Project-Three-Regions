@@ -51,7 +51,7 @@ public class PlayerController : Entity
 
     public override void Start()
     {
-        b_health = b_maxHealth;
+        SetHealth(b_maxHealth);
 
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = gravityScale;

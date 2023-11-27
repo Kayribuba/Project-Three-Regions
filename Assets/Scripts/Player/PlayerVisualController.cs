@@ -46,6 +46,12 @@ public class PlayerVisualController : MonoBehaviour
 
         weaponSR.sprite = weaponSprite;
     }
+    public void SetWeaponSprite(PlayerWeapon playerWeapon)
+    {
+        if (weaponSR == null) return;
+
+        weaponSR.sprite = playerWeapon.WeaponSprite;
+    }
 
 
     void EvaluateAnimState()
