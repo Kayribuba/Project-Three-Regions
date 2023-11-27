@@ -168,7 +168,7 @@ public class PlayerWeaponController : MonoBehaviour
         currentWeaponIndex = index;
         currentWeapon = OwnedWeapons[index];
         Barrel.transform.localPosition = currentWeapon.BarrelOffset;
-        playerVisualController.SetWeaponSprite(currentWeapon.WeaponSprite);
+
         SetIsHoldingWeapon(true);
 
         OnWeaponChanged?.Invoke(currentWeapon);
