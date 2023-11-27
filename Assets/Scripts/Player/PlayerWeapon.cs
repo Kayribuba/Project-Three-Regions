@@ -17,6 +17,7 @@ public class PlayerWeapon : ScriptableObject
     [Tooltip("Every pixel in your sprite is 0.041666... in length :(")]
     [SerializeField] Vector2 _barrelOffset = new Vector2(.5f, 0);
     [SerializeField] Sprite _weaponSprite;
+    [SerializeField] Sprite _weaponIcon;
     [SerializeField] GameObject _projectile;
 
     public string ID => _ID;
@@ -29,6 +30,7 @@ public class PlayerWeapon : ScriptableObject
     public float BurstCooldown => _burstCooldown;
     public Vector2 BarrelOffset => _barrelOffset;
     public Sprite WeaponSprite => _weaponSprite;
+    public Sprite WeaponIcon=> _weaponIcon;
     public GameObject Projectile => _projectile;
 }
 public enum FireType { Single, Burst, Automatic }

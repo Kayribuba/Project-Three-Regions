@@ -1,37 +1,53 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public abstract class Entity : MonoBehaviour
 {
-    [SerializeField] internal Rigidbody2D rb;
+    public UnityEvent<float, float> OnHealthChanged;
+
     [SerializeField] internal float b_maxHealth = 1;
+    [SerializeField] internal Rigidbody2D rb;
     [SerializeField] internal float b_damage = 1;
     [SerializeField] internal float b_speed = 1;
     [SerializeField] internal float b_knockbackDuration = .5f;
     [SerializeField] internal float tickRate = .1f;
 
-    internal float b_health;
+    float b_health;
     internal bool b_inputEnabled = true;
+
     bool UpdateBeh_Enabled = true;
 
     public virtual void Start()
     {
-        b_health = b_maxHealth;
+        SetHealth(b_maxHealth);
 
         if (rb == null) rb = GetComponent<Rigidbody2D>();
 
         SetUpdateCoroutine(true);
     }
 
+    public float GetHealth() => b_health;
     public virtual void AddHealth(float amount) => SetHealth(b_health + amount);
     public virtual void RemoveHealth(float amount) => SetHealth(b_health - amount);
     public void SetHealth(float setTo)
     {
         b_health = Mathf.Clamp(setTo, 0, b_maxHealth);
 
+        OnHealthChanged?.Invoke(b_health, b_maxHealth);
+
         if (b_health == 0) Die();
+    }
+    public void SetMaxHealth(float setTo)
+    {
+        if (setTo <= 0) return;
+
+        b_maxHealth = setTo;
+
+        if (b_health > b_maxHealth) b_health = b_maxHealth;
+        else OnHealthChanged?.Invoke(b_health, b_maxHealth);
     }
     public void KnockBack(Vector2 direction, float force = 1)
     {

@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerWeaponController : MonoBehaviour
 {
+    public UnityEvent<PlayerWeapon> OnWeaponChanged;
     public bool IsHoldingWeapon { get; private set; } = false;
 
     [SerializeField] GameObject Barrel;
@@ -166,8 +168,10 @@ public class PlayerWeaponController : MonoBehaviour
         currentWeaponIndex = index;
         currentWeapon = OwnedWeapons[index];
         Barrel.transform.localPosition = currentWeapon.BarrelOffset;
-        playerVisualController.SetWeaponSprite(currentWeapon.WeaponSprite);
+
         SetIsHoldingWeapon(true);
+
+        OnWeaponChanged?.Invoke(currentWeapon);
 
         return true;
     }

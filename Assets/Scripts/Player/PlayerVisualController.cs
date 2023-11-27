@@ -40,11 +40,11 @@ public class PlayerVisualController : MonoBehaviour
 
         EvaluateAnimState();
     }
-    public void SetWeaponSprite(Sprite weaponSprite)
+    public void SetWeaponSprite(PlayerWeapon playerWeapon)
     {
         if (weaponSR == null) return;
 
-        weaponSR.sprite = weaponSprite;
+        weaponSR.sprite = playerWeapon.WeaponSprite;
     }
 
 
