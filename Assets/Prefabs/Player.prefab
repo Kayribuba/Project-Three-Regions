@@ -858,6 +858,8 @@ MonoBehaviour:
   b_speed: 1
   b_knockbackDuration: 0.5
   tickRate: 0
+  parryDuration: 0.3
+  parryCooldown: 0.9
   accelerationTime: 0.1
   decelerationTime: 0.2
   airSpeedModifier: 0.9

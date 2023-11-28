@@ -47,7 +47,16 @@ public class Projectile : MonoBehaviour
         isInitalized = true;
     }
 
-     void OnTriggerEnter2D(Collider2D collision)
+    void GetParried()
+    {
+        IsPlayerProjectile = !IsPlayerProjectile;
+
+        TagsToIgnore = IsPlayerProjectile ? GLOBAL.PlayerIgnoreTags : GLOBAL.EnemyIgnoreTags;
+
+        rb.velocity = -rb.velocity;
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (isInitalized == false) return;
         if (collision.isTrigger) return;
@@ -71,6 +80,18 @@ public class Projectile : MonoBehaviour
 
         if (collision.TryGetComponent(out Entity entity))
         {
+            if (entity is PlayerController)
+            {
+                PlayerController pc = entity as PlayerController;
+
+                if (pc.IsParrying)
+                {
+                    pc.ParrySuccessful();
+                    GetParried();
+                    return;
+                }
+            }
+
             entity.RemoveHealth(Damage);
         }
 

@@ -18,6 +18,8 @@ using UnityEngine;
 
 public abstract class GLOBAL
 {
+    public static string[] EnemyIgnoreTags = new string[] { "Enemy" };
+    public static string[] PlayerIgnoreTags = new string[] { "Player" };
     public static Vector2 DefaultSpawnPosition = Vector2.zero;
     public static float ProjectileSpeed = 15;
     public static string UnnasignedString = "[UNASSIGNED]";

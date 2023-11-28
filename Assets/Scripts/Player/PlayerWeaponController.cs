@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +8,7 @@ public class PlayerWeaponController : MonoBehaviour
     public UnityEvent<PlayerWeapon> OnWeaponChanged;
     public bool IsHoldingWeapon { get; private set; } = false;
 
+    [Header("Reference")]
     [SerializeField] GameObject Barrel;
     [SerializeField] PlayerVisualController playerVisualController;
     [SerializeField] PlayerController playerController;
@@ -100,7 +100,7 @@ public class PlayerWeaponController : MonoBehaviour
 
             if(instProjectile.TryGetComponent(out Projectile outProjectile))
             {
-                outProjectile.Initalize(FireDirection, true, currentWeapon.Damage, new string[] { "Player" });
+                outProjectile.Initalize(FireDirection, true, currentWeapon.Damage, GLOBAL.PlayerIgnoreTags);
             }
         }
 

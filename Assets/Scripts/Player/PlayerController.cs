@@ -6,12 +6,15 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : Entity
 {
-    public Vector3 forwardVector { get; private set; }
-    public bool isFacingLeft { get; private set; }
-    public bool isGrounded { get; private set; }
-    public bool isOld { get; private set; }
+    public Vector3 ForwardVector { get; private set; }
+    public bool IsParrying { get; private set; }
+    public bool IsFacingLeft { get; private set; }
+    public bool IsGrounded { get; private set; }
+    public bool IsOld { get; private set; }
 
     [Header("Values")]
+    [SerializeField] float parryDuration = .3f;
+    [SerializeField] float parryCooldown = .9f;
     [Tooltip("How long will fully accelerating take")]
     [SerializeField, Min(0.001f)] float  accelerationTime = .1f;
     [Tooltip("How long will fully decelerating take")]
@@ -46,6 +49,7 @@ public class PlayerController : Entity
 
     float targetTime_CoyoteJump = -1;
     float targetTime_CoyoteTime = -1;
+    float targetTime_Parry = -1;
 
     Vector2 rbVelocityHash = Vector2.zero;
 
@@ -64,11 +68,12 @@ public class PlayerController : Entity
         ApplyMovement();
         CheckGround();
         IntensifyGravityScale();
+        CheckValues();
     }
 
     public void PlayerIsSelected()
     {
-        isOld = true;
+        IsOld = true;
     }
     public void SpawnPlayer(Vector2 position)
     {
@@ -76,6 +81,10 @@ public class PlayerController : Entity
 
         overrideVelocity = true;
         overrideDisableTime = Time.time + .2f;
+    }
+    public void ParrySuccessful()
+    {
+        IsParrying = false;
     }
 
     bool isHoldingHorizontalInput;
@@ -91,7 +100,7 @@ public class PlayerController : Entity
                 if (horizontalInput != 0)
                 { overrideVelocity = false; }
 
-                if (isHoldingHorizontalInput == false && isGrounded && overrideDisableTime < Time.time)
+                if (isHoldingHorizontalInput == false && IsGrounded && overrideDisableTime < Time.time)
                 { overrideVelocity = false; }
             }
 
@@ -100,6 +109,12 @@ public class PlayerController : Entity
 
             if (jumpPressedDown) targetTime_CoyoteJump = Time.time + coyoteJumpWindow;
             else if (jumpPressedUp) targetTime_CoyoteJump = -1;
+
+        if (IsParrying == false && targetTime_Parry <= Time.time && Input.GetButtonDown("Parry"))
+        {
+            IsParrying = true;
+            targetTime_Parry = Time.time + parryDuration;
+        }
         //}
         //else
         //{
@@ -124,7 +139,7 @@ public class PlayerController : Entity
         }
         else if (Mathf.Abs(horizontalInput) > 0)//accelerate
         {
-            float airBonus = isGrounded ? 1 : airSpeedModifier;
+            float airBonus = IsGrounded ? 1 : airSpeedModifier;
             hMovementThisFrame = maxSpeed / accelerationTime * airBonus * Time.deltaTime * horizontalInput;
 
             if (hMovementThisFrame > 0)
@@ -159,7 +174,7 @@ public class PlayerController : Entity
 
         CheckFlipNeed();
 
-        if (targetTime_CoyoteJump > Time.time && isGrounded)
+        if (targetTime_CoyoteJump > Time.time && IsGrounded)
         {
             targetVelocity.y = jumpForce;
             targetTime_CoyoteJump = -1;
@@ -177,21 +192,21 @@ public class PlayerController : Entity
     {
         if (Physics2D.OverlapBox(GroundCheck.position, groundCheckRadius, 0, GroundLayers))
         {
-            isGrounded = true;
+            IsGrounded = true;
             targetTime_CoyoteTime = Time.time + coyoteTimeWindow;
 
             overrideVelocity = false;
         }
         else if (targetTime_CoyoteTime >= Time.time)
         {
-            isGrounded = true;
+            IsGrounded = true;
         }
         else
         {
-            isGrounded = false;
+            IsGrounded = false;
         }
 
-        UE_Grounded.Invoke(isGrounded);
+        UE_Grounded.Invoke(IsGrounded);
     }
     void IntensifyGravityScale()
     {
@@ -200,16 +215,24 @@ public class PlayerController : Entity
         else
             rb.gravityScale = gravityScale;
     }
+    void CheckValues()
+    {
+        if(IsParrying && targetTime_Parry <= Time.time)
+        {
+            IsParrying = false;
+            targetTime_Parry = Time.time + parryCooldown;
+        }
+    }
     void CheckFlipNeed()
     {
-        if ((horizontalInput > 0 && isFacingLeft) || (horizontalInput < 0 && !isFacingLeft))
+        if ((horizontalInput > 0 && IsFacingLeft) || (horizontalInput < 0 && !IsFacingLeft))
             Flip();
     }
     void Flip()
     {
         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
-        isFacingLeft = !isFacingLeft;
-        forwardVector = isFacingLeft ? new Vector2(-1, 0) : new Vector2(1, 0);
+        IsFacingLeft = !IsFacingLeft;
+        ForwardVector = IsFacingLeft ? new Vector2(-1, 0) : new Vector2(1, 0);
     }
     void OnDrawGizmosSelected()
     {

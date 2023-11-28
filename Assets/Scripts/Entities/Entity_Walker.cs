@@ -162,7 +162,7 @@ public class Entity_Walker : Entity
                 GameObject instProj = Instantiate(bullet.Projectile, newPos, Quaternion.identity);
                 if (instProj.TryGetComponent(out Projectile outProj))
                 {
-                    outProj.Initalize(newDir, false, b_damage, new string[] { "Enemy" });
+                    outProj.Initalize(newDir, false, b_damage, GLOBAL.EnemyIgnoreTags);
                 }
             }
 

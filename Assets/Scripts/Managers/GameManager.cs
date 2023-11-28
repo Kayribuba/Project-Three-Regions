@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
         {
             foreach (PlayerController temp in tempArray)
             {
-                if (temp.isOld)
+                if (temp.IsOld)
                 {
                     Player = temp.gameObject;
                     break;
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
 
             if(Player.TryGetComponent(out PlayerController pcont))
             {
-                if(pcont.isOld == false) DontDestroyOnLoad(Player);
+                if(pcont.IsOld == false) DontDestroyOnLoad(Player);
                 pcont.PlayerIsSelected();
             }
             
