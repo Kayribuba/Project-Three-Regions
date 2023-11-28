@@ -7,22 +7,26 @@ public class Entity_Walker : Entity
 {
     enum WalkerBehaviour { Walking, Waiting, Attacking }
 
-
-    [SerializeField] LayerMask SightObstructionLayers = 1 << 6 | 1 << 7;
-    [SerializeField] GameObject WarnedEffect;
-    [SerializeField] Transform WarnedEffectPoint;
-    [SerializeField] GameObject _projectile;
-    [SerializeField] float barrelDistance = .5f;
-    [SerializeField] Transform downCheck;
-    [SerializeField] Transform sideCheck;
-    [SerializeField] float attackCooldown = .5f;
-    [SerializeField] float sightRadius = 5f;
-    [SerializeField] float downCheckRange = .5f;
-    [SerializeField] Vector2 sideCheckSize = Vector2.one;
+    [Header("Design")]
+    [SerializeField] BulletGroup bullets;
     [SerializeField] float pauseTime = 1f;
     [SerializeField] float rememberTime = 1f;
+    [SerializeField] float sightRadius = 5f;
+    [SerializeField] float barrelDistance = .5f;
+
+    [Header("Visuals")]
+    [SerializeField] GameObject WarnedEffect;
+    [SerializeField] Transform WarnedEffectPoint;
+
+    [Header("Reference")]
+    [SerializeField] LayerMask SightObstructionLayers = 1 << 6 | 1 << 7;
+    [SerializeField] Transform downCheck;
+    [SerializeField] Transform sideCheck;
+    [SerializeField] float downCheckRange = .5f;
+    [SerializeField] Vector2 sideCheckSize = Vector2.one;
 
     GameObject Player;
+
     Vector2 _playerPos
     {
         get
@@ -139,19 +143,28 @@ public class Entity_Walker : Entity
         Vector2 sightDir = _playerPos - transformPos;
         sightDir.Normalize();
 
-        if (nextAttackTime <= Time.time && _projectile != null)//Attack time
+        if (nextAttackTime <= Time.time)//Attack time
         {
             Vector2 barrelPos = transformPos + (sightDir * barrelDistance);
 
             if (Vector2.Dot(sightDir, direction) < 0) Turn();
 
-            GameObject instProj = Instantiate(_projectile, barrelPos, Quaternion.identity);
-            if (instProj.TryGetComponent(out Projectile outProj))
+
+            for(int i = 0; i < bullets.Bullets.Length; i++)
             {
-                outProj.Initalize(sightDir, false, b_damage, new string[] { "Enemy" });
+                Bullet bullet = bullets.Bullets[i];
+                if (bullet.Projectile == null) continue;
+
+                GameObject instProj = Instantiate(bullet.Projectile, barrelPos + bullet.Offset, Quaternion.identity);
+                if (instProj.TryGetComponent(out Projectile outProj))
+                {
+                    Vector2 newDir = Quaternion.AngleAxis(bullet.TurnDegree, Vector3.forward) * sightDir;
+
+                    outProj.Initalize(newDir, false, b_damage, new string[] { "Enemy" });
+                }
             }
 
-            nextAttackTime = Time.time + attackCooldown;
+            nextAttackTime = Time.time + bullets.Cooldown;
         }
 
         if (isRememberingPlayer == false)

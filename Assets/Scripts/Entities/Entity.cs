@@ -8,6 +8,7 @@ public abstract class Entity : MonoBehaviour
 {
     public UnityEvent<float, float> OnHealthChanged;
 
+    [Header("Base Class Values")]
     [SerializeField] internal float b_maxHealth = 1;
     [SerializeField] internal Rigidbody2D rb;
     [SerializeField] internal float b_damage = 1;

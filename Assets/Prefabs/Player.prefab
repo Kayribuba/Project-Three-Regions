@@ -860,7 +860,7 @@ MonoBehaviour:
   tickRate: 0
   accelerationTime: 0.1
   decelerationTime: 0.2
-  airSpeedModifier: 0.5
+  airSpeedModifier: 0.9
   maxSpeed: 10
   jumpForce: 15
   fallingAccelerationIntensity: 5

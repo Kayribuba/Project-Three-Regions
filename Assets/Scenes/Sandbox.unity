@@ -203,7 +203,7 @@ GameObject:
   - component: {fileID: 639851780}
   - component: {fileID: 639851781}
   m_Layer: 8
-  m_Name: Walker
+  m_Name: ShotGuy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -230,21 +230,34 @@ MonoBehaviour:
   b_speed: 1
   b_knockbackDuration: 0.5
   tickRate: 0.03
+  bullets:
+    Bullets:
+    - Projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
+      TurnDegree: 10
+      Offset: {x: 0, y: 0}
+      Speed: 0
+    - Projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
+      TurnDegree: 0
+      Offset: {x: 0, y: 0}
+      Speed: 0
+    - Projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
+      TurnDegree: -10
+      Offset: {x: 0, y: 0}
+      Speed: 0
+    Cooldown: 0.5
+  pauseTime: 1
+  rememberTime: 1
+  sightRadius: 5
+  barrelDistance: 0.5
+  WarnedEffect: {fileID: 1327461475167692991, guid: 013906d24683b8e488f4720e14b16ee1, type: 3}
+  WarnedEffectPoint: {fileID: 681022785}
   SightObstructionLayers:
     serializedVersion: 2
     m_Bits: 192
-  WarnedEffect: {fileID: 1327461475167692991, guid: 013906d24683b8e488f4720e14b16ee1, type: 3}
-  WarnedEffectPoint: {fileID: 681022785}
-  _projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
-  barrelDistance: 0.5
   downCheck: {fileID: 1243213844}
   sideCheck: {fileID: 1507513723}
-  attackCooldown: 1
-  sightRadius: 5
   downCheckRange: 0.2
   sideCheckSize: {x: 0.1, y: 0.9}
-  pauseTime: 1
-  rememberTime: 1
 --- !u!50 &639851778
 Rigidbody2D:
   serializedVersion: 4
