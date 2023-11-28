@@ -8,7 +8,7 @@ public class Entity_Walker : Entity
     enum WalkerBehaviour { Walking, Waiting, Attacking }
 
     [Header("Design")]
-    [SerializeField] BulletGroup bullets;
+    [SerializeField] BulletGroup[] bullets;
     [SerializeField] float pauseTime = 1f;
     [SerializeField] float rememberTime = 1f;
     [SerializeField] float sightRadius = 5f;
@@ -26,6 +26,7 @@ public class Entity_Walker : Entity
     [SerializeField] Vector2 sideCheckSize = Vector2.one;
 
     GameObject Player;
+    int bulletIndex = 0;
 
     Vector2 _playerPos
     {
@@ -150,21 +151,23 @@ public class Entity_Walker : Entity
             if (Vector2.Dot(sightDir, direction) < 0) Turn();
 
 
-            for(int i = 0; i < bullets.Bullets.Length; i++)
+            for (int i = 0; i < bullets[bulletIndex].Bullets.Length; i++)
             {
-                Bullet bullet = bullets.Bullets[i];
+                Bullet bullet = bullets[bulletIndex].Bullets[i];
                 if (bullet.Projectile == null) continue;
 
-                GameObject instProj = Instantiate(bullet.Projectile, barrelPos + bullet.Offset, Quaternion.identity);
+                Vector2 newDir = Quaternion.AngleAxis(bullet.TurnDegree, Vector3.forward) * sightDir;
+                Vector2 newPos = barrelPos + (Vector2)(Quaternion.AngleAxis(Vector2.Angle(Vector2.right, sightDir), Vector3.forward) * bullet.Offset);
+
+                GameObject instProj = Instantiate(bullet.Projectile, newPos, Quaternion.identity);
                 if (instProj.TryGetComponent(out Projectile outProj))
                 {
-                    Vector2 newDir = Quaternion.AngleAxis(bullet.TurnDegree, Vector3.forward) * sightDir;
-
                     outProj.Initalize(newDir, false, b_damage, new string[] { "Enemy" });
                 }
             }
 
-            nextAttackTime = Time.time + bullets.Cooldown;
+            nextAttackTime = Time.time + bullets[bulletIndex].Cooldown;
+            IncrementBulletIndex();
         }
 
         if (isRememberingPlayer == false)
@@ -172,6 +175,8 @@ public class Entity_Walker : Entity
             SwitchBehaviour(WalkerBehaviour.Walking);
         }
     }
+
+    void IncrementBulletIndex() => bulletIndex = (bulletIndex + 1) % bullets.Length;
 
     void SwitchBehaviour(WalkerBehaviour switchTo)
     {

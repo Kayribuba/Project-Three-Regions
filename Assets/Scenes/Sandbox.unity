@@ -231,9 +231,9 @@ MonoBehaviour:
   b_knockbackDuration: 0.5
   tickRate: 0.03
   bullets:
-    Bullets:
+  - Bullets:
     - Projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
-      TurnDegree: 10
+      TurnDegree: 30
       Offset: {x: 0, y: 0}
       Speed: 0
     - Projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
@@ -241,10 +241,10 @@ MonoBehaviour:
       Offset: {x: 0, y: 0}
       Speed: 0
     - Projectile: {fileID: 4363495044772854021, guid: 3b0a91de9f89ec34eaa8271d73a0a778, type: 3}
-      TurnDegree: -10
+      TurnDegree: -30
       Offset: {x: 0, y: 0}
       Speed: 0
-    Cooldown: 0.5
+    Cooldown: 1
   pauseTime: 1
   rememberTime: 1
   sightRadius: 5
